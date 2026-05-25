@@ -1,0 +1,11 @@
+main
+main-arm64
+main-stripped
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
