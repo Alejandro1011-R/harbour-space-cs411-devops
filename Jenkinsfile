@@ -22,7 +22,7 @@ pipeline {
                     keyFileVariable: 'SSH_KEY',
                     usernameVariable: 'SSH_USER'
                 )]) {
-                    sh 'scp -i $SSH_KEY main $SSH_USER@target:~'
+                    sh 'scp -i $SSH_KEY main laborant@target:~'
                 }
             }
         }
