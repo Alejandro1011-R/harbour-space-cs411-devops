@@ -15,6 +15,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                sh 'mkdir -p ~/.ssh'
+                sh 'ssh-keyscan -H target >> ~/.ssh/known_hosts'
                 withCredentials([sshUserPrivateKey(
                     credentialsId: 'target-ssh',
                     keyFileVariable: 'SSH_KEY',
