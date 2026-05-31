@@ -14,6 +14,7 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'docker-ssh', keyFileVariable: 'SSH_KEY')]) {
                     sh "ssh -i $SSH_KEY laborant@docker 'docker rm -f my-go-app || true'"
+                    sh "ssh -i $SSH_KEY laborant@docker 'docker pull ${IMAGE_NAME}'"
                     sh "ssh -i $SSH_KEY laborant@docker 'docker run -d -p 4444:4444 --name my-go-app ${IMAGE_NAME}'"
                 }
             }
