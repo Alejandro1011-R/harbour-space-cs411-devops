@@ -15,14 +15,12 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'mkdir -p ~/.ssh'
-                sh 'ssh-keyscan -H target >> ~/.ssh/known_hosts'
                 withCredentials([sshUserPrivateKey(
                     credentialsId: 'target-ssh',
                     keyFileVariable: 'SSH_KEY',
                     usernameVariable: 'SSH_USER'
                 )]) {
-                    sh 'scp -i $SSH_KEY main laborant@target:~'
+                    sh 'ansible-playbook -i hosts.ini --private-key=$SSH_KEY --user=$SSH_USER playbook.yml'
                 }
             }
         }
