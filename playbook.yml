@@ -1,30 +1,21 @@
-# playbook.yml
 - hosts: all
   tasks:
     - name: Copy the artifact
       copy:
         src: main
         dest: /home/laborant/main
-        mode: '0755'      # without this, the binary lands non-executable
-      notify: Restart main.service
+        mode: '0755'
 
     - name: Create a unit file
-      become: True        # writing under /etc requires root
+      become: True
       copy:
-        src: main.service
-        dest: /etc/systemd/system/main.service
-      notify: Restart main.service
+        src: myapp.service
+        dest: /etc/systemd/system/myapp.service
 
-    - name: Ensure the service is running
+    - name: Enable and start myapp service
       become: True
-      ansible.builtin.systemd:
-        name: main.service
-        daemon_reload: true
-        state: started
-
-  handlers:
-    - name: Restart main.service
-      become: True
-      ansible.builtin.systemd:
-        name: main.service
+      systemd:
+        name: myapp.service
+        daemon_reload: yes
+        enabled: yes
         state: restarted
