@@ -12,8 +12,10 @@ pipeline {
         }
         stage('Deploy to Docker VM') {
             steps {
-                sh "docker rm -f my-go-app || true"
-                sh "docker run -d -p 4444:4444 --name my-go-app ${IMAGE_NAME}"
+                withCredentials([sshUserPrivateKey(credentialsId: 'docker-ssh', keyFileVariable: 'SSH_KEY')]) {
+                    sh "ssh -i $SSH_KEY laborant@docker 'docker rm -f my-go-app || true'"
+                    sh "ssh -i $SSH_KEY laborant@docker 'docker run -d -p 4444:4444 --name my-go-app ${IMAGE_NAME}'"
+                }
             }
         }
     }
