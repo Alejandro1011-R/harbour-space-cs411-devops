@@ -1,0 +1,13 @@
+FROM golang:1.24 AS builder
+WORKDIR /app
+COPY main.go .
+RUN CGO_ENABLED=0 GOOS=linux go build -o main main.go
+
+FROM alpine:latest
+COPY --from=builder /app/main /main
+
+EXPOSE 4444
+
+HEALTHCHECK --interval=10s --timeout=2s CMD wget -qO- http://localhost:4444/ || exit 1
+
+CMD ["/main"]

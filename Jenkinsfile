@@ -1,29 +1,21 @@
 pipeline {
-    agent any
+    agent any 
     environment {
-        CGO_ENABLED = '0'
+        IMAGE_NAME = "ttl.sh/alejandro-ramirez:2h" 
     }
-    tools {
-       go "1.24.1"
-    }
-
     stages {
-        stage('Build') {
+        stage('Build and Push Image') {
             steps {
-                sh "go build main.go"
+                sh "docker build -t ${IMAGE_NAME} ."
+                sh "docker push ${IMAGE_NAME}"
             }
         }
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([sshUserPrivateKey(
-                    credentialsId: 'target-ssh',
-                    keyFileVariable: 'SSH_KEY',
-                    usernameVariable: 'SSH_USER'
-                )]) {
-                    sh 'ansible-playbook -i hosts.ini --private-key=$SSH_KEY playbook.yml'
+                withCredentials([string(credentialsId: 'kubernetes-token', variable: 'TOKEN')]) {
+                    sh 'kubectl --server=https://kubernetes:6443 --insecure-skip-tls-verify=true --token=$TOKEN apply -f pod.yaml -f svc.yaml'
                 }
             }
         }
-
     }
 }
