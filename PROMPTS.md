@@ -1,0 +1,3 @@
+For the Multi-stage build, I used a two-stage process: the first stage compiles the binary with `golang:1.24`, and the second stage uses `alpine:latest` to keep the final image size under 50MB while maintaining the necessary compatibility to run health checks.
+
+For the HEALTHCHECK, I configured a check using `wget` every 10 seconds. This allows an orchestrator like Kubernetes to automatically detect failures, remove the container from traffic, and restart it to restore service.
