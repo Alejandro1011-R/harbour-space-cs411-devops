@@ -11,7 +11,6 @@ pipeline {
             }
         }
         stage('Deploy to Docker VM') {
-            agent { label 'docker' } 
             steps {
                 sh "docker rm -f my-go-app || true"
                 sh "docker run -d -p 4444:4444 --name my-go-app ${IMAGE_NAME}"
