@@ -8,3 +8,15 @@ spec:
   containers:
   - image: ttl.sh/alejandro-ramirez:2h
     name: myapp
+    ports:
+    - containerPort: 4444
+    
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 4444
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 4444
+      
