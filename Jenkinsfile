@@ -20,7 +20,7 @@ pipeline {
                     keyFileVariable: 'SSH_KEY',
                     usernameVariable: 'SSH_USER'
                 )]) {
-                    sh 'ansible-playbook -i hosts.ini --private-key=$SSH_KEY --user=$SSH_USER playbook.yml'
+                    sh 'ansible-playbook -i hosts.ini --private-key=$SSH_KEY playbook.yml'
                 }
             }
         }
