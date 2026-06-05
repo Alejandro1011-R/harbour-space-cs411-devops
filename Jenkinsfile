@@ -1,13 +1,28 @@
 pipeline {
-    agent any 
+    agent any
     environment {
-        IMAGE_NAME = "ttl.sh/alejandro-ramirez:2h" 
+        IMAGE_NAME = "ttl.sh/alejandro-ramirez:2h"
     }
     stages {
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Unit Test') {
+            steps {
+                sh 'node --test'
+            }
+        }
         stage('Build and Push Image') {
             steps {
                 sh "docker build -t ${IMAGE_NAME} ."
                 sh "docker push ${IMAGE_NAME}"
+            }
+        }
+        stage('Deploy to Target') {
+            steps {
+                sh 'ansible-playbook -i hosts.ini playbook.yml'
             }
         }
         stage('Deploy to Kubernetes') {

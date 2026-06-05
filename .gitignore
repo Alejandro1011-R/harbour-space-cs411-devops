@@ -9,3 +9,5 @@ main-stripped
 *.dylib
 *.test
 *.out
+
+node_modules/

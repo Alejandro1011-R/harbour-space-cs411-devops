@@ -1,13 +1,11 @@
-FROM golang:1.24 AS builder
-WORKDIR /app
-COPY main.go .
-RUN CGO_ENABLED=0 GOOS=linux go build -o main main.go
+FROM node:24-alpine AS deps
+WORKDIR /usr/app
+COPY package.json .
+RUN npm install
 
-FROM alpine:latest
-COPY --from=builder /app/main /main
-
+FROM node:24-alpine
+WORKDIR /usr/app
+COPY --from=deps /usr/app/node_modules node_modules
+COPY index.js index.js
 EXPOSE 4444
-
-HEALTHCHECK --interval=10s --timeout=2s CMD wget -qO- http://localhost:4444/ || exit 1
-
-CMD ["/main"]
+CMD ["node", "index.js"]

@@ -1,10 +1,28 @@
 - hosts: all
   tasks:
-    - name: Copy the artifact
+    - name: Install Node.js 24
+      become: True
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_24.x -o /tmp/nodesource_setup.sh
+        bash /tmp/nodesource_setup.sh
+        apt-get install -y nodejs
+
+    - name: Copy index.js
       copy:
-        src: main
-        dest: /home/laborant/main
-        mode: '0755'
+        src: index.js
+        dest: /home/laborant/index.js
+        mode: '0644'
+
+    - name: Copy package.json
+      copy:
+        src: package.json
+        dest: /home/laborant/package.json
+        mode: '0644'
+
+    - name: Install npm dependencies
+      shell: npm install
+      args:
+        chdir: /home/laborant
 
     - name: Create a unit file
       become: True

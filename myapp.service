@@ -4,7 +4,8 @@ After=network.target
 
 [Service]
 User=laborant
-ExecStart=/home/laborant/main
+WorkingDirectory=/home/laborant
+ExecStart=/usr/bin/node /home/laborant/index.js
 Restart=on-failure
 
 [Install]
