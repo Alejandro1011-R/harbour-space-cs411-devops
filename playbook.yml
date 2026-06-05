@@ -3,7 +3,7 @@
     - name: Copy the artifact
       copy:
         src: main
-        dest: /home/laborant/main
+        dest: /home/ubuntu/main
         mode: '0755'
 
     - name: Create a unit file
