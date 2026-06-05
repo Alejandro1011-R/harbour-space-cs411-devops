@@ -1,30 +1,24 @@
 pipeline {
-  agent any
-
-  environment {
-    CGO_ENABLED = '0'
-  }
-
-  tools {
-    go "1.24.1"
-  }
-
-  stages {
-    stage('Build') {
-      steps {
-        sh "go build main.go"
-      }
+    agent any 
+    environment {
+        IMAGE_NAME = "ttl.sh/alejandro-ramirez:2h" 
     }
-    stage('Deploy') {
-      steps {
-        withCredentials([sshUserPrivateKey(
-          credentialsId: 'ec2-ssh',
-          keyFileVariable: 'SSH_KEY',
-          usernameVariable: 'SSH_USER'
-        )]) {
-          sh 'ansible-playbook -i hosts.ini --private-key=$SSH_KEY playbook.yml'
+    stages {
+        stage('Build and Push Image') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME} ."
+                sh "docker push ${IMAGE_NAME}"
+            }
         }
-      }
+        stage('Deploy to Docker VM') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'docker-ssh', keyFileVariable: 'SSH_KEY')]) {
+                    sh "ssh -i $SSH_KEY laborant@docker 'docker rm -f my-go-app || true'"
+                    sh "ssh -i $SSH_KEY laborant@docker 'docker pull ${IMAGE_NAME}'"
+                    sh "ssh -i $SSH_KEY laborant@docker 'docker run -d -p 4444:4444 --name my-go-app ${IMAGE_NAME}'"
+                }
+            }
+        }
     }
   }
 }
