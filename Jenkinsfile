@@ -25,6 +25,11 @@ pipeline {
                 sh 'ansible-playbook -i hosts.ini playbook.yml'
             }
         }
+        stage('Deploy to Docker') {
+            steps {
+                sh "ssh -o StrictHostKeyChecking=no laborant@docker 'docker pull ${IMAGE_NAME} && docker rm -f myapp || true && docker run -d --name myapp -p 4444:4444 ${IMAGE_NAME}'"
+            }
+        }
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([string(credentialsId: 'kubernetes-token', variable: 'TOKEN')]) {
