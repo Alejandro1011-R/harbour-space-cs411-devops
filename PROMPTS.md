@@ -22,3 +22,11 @@ May 31 09:31:36 target systemd[1]: myapp.service: Failed with result 'signal'.
 May 31 09:31:36 target systemd[1]: myapp.service: Scheduled restart job, restart counter is at 1.
 May 31 09:31:36 target systemd[1]: Started myapp.service - CS411 application.
 May 31 09:31:36 target main[7665]: Server started on port 4444
+
+
+
+## Lock down the Security Group
+
+Failure mode of `:22 from 0.0.0.0/0`: Anyone on the internet can try to connect via SSH to your instance, exposing it to brute-force attacks and automated scanners.
+
+Inconvenience of the narrower rule: If your IP changes you lose SSH access and have to update the rule manually from the AWS console.

@@ -3,8 +3,8 @@ Description=CS411 application
 After=network.target
 
 [Service]
-User=laborant
-ExecStart=/home/laborant/main
+User=ubuntu
+ExecStart=/home/ubuntu/main
 Restart=on-failure
 
 [Install]

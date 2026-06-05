@@ -53,3 +53,27 @@ The cleanest and most robust solution, without resorting to Docker or rewriting 
 ## The underlying lesson
 
 The main difference is that a process that "exists right now" is ephemeral and vulnerable because it depends on the lifecycle of the user terminal that launched it, whereas a "supervised process" is managed directly by the operating system, which guarantees that it runs in the background, starts on boot, and restarts automatically if it fails.
+
+
+
+# Deployment to aws ec2
+
+1. Security Group is blocking port 4444, a hang instead of "connection refused" is almost always a firewall silently dropping packets. Fix: add an inbound TCP/4444 rule to the Security Group.
+
+Verification:
+```bash
+nc -zv <public-ip> 4444
+```
+
+2. app is listening on localhost only. If the app binds to `127.0.0.1` instead of `0.0.0.0`, external traffic never reaches it.
+
+Verification:
+```bash
+ss -tlnp | grep 4444
+```
+## Solution
+Add an inbound TCP/4444 rule from `0.0.0.0/0` in the Security Group.
+
+## The underlying lesson
+A **dropped** packet gets no response and the connection hangs forever.
+A packet hitting a **closed port** gets a TCP RST back — immediate "connection refused".
